@@ -85,9 +85,3 @@
 
 (defspecialization (%%== :inline t) ((first hash-table) (second hash-table)) (values boolean &optional)
   (equalp first second))
-
-(defun foo (a)
-  (declare (fixnum a))
-  (if (== a :white)
-      (print "shit")
-      (print "cool")))
