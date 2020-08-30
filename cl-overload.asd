@@ -2,10 +2,14 @@
 
 (asdf:defsystem #:cl-overload
   :description "Common functions overload"
-  :author "aun aun.sokolov@gmail.com>"
   :license  "MIT"
-  :version "0.1"
+  :version "0.2"
   :serial t
   :depends-on (#:specialization-store #:introspect-environment)
   :components ((:file "package")
-               (:file "cl-overload")))
+               (:module "src"
+                :components
+                ((:file "utility")
+                 (:file "equality")
+                 (:file "deep-copy")
+                 (:file "cast")))))
