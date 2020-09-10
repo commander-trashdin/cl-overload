@@ -3,15 +3,6 @@
 ;;; Cast
 
 
-(defstore cast (object type))
-
-
-(defspecialization (cast :inline t) ((first bit) (second t)) (values boolean &optional)
-  (declare (ignorable first second))
-  (error 'simple-error)) ;; FIXME
-
-
-
 (defspecialization (cast :inline t) ((first bit) (second (eql boolean))) (values boolean &optional)
   (declare (ignorable second))
   (/= 0 first))
@@ -35,3 +26,16 @@
 (defspecialization (cast :inline t) ((first character) (second (eql string))) (values string &optional)
   (declare (ignorable second))
   (format nil "~a" first))
+
+
+(defspecialization (cast :inline t) ((first vector) (second (eql list))) (values list &optional)
+  (declare (ignorable second))
+  (coerce first 'list))
+
+(defspecialization (cast :inline t) ((first list) (second (eql vector))) (values vector &optional)
+  (declare (ignorable second))
+  (coerce first second))
+
+
+;; TODO casts to strings -- should probably try to cast stuff to characters as well? But how?
+;; There are at least 2 possibilities -- 1 turns into #\1 or into (code-char 1).

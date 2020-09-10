@@ -9,7 +9,10 @@
   :components ((:file "package")
                (:module "src"
                 :components
-                ((:file "utility")
+                ((:file "stores")
+                 (:file "utility")
                  (:file "equality")
+                 (:file "inequality")
+                 (:file "arithmetics")
                  (:file "deep-copy")
                  (:file "cast")))))
