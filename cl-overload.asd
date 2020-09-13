@@ -5,12 +5,12 @@
   :license  "MIT"
   :version "0.2"
   :serial t
-  :depends-on (#:specialization-store #:introspect-environment)
+  :depends-on (#:specialization-store #:introspect-environment #:closer-mop)
   :components ((:file "package")
                (:module "src"
                 :components
                 ((:file "stores")
-                 (:file "utility")
+                 ;(:file "utility")
                  (:file "equality")
                  (:file "inequality")
                  (:file "arithmetics")

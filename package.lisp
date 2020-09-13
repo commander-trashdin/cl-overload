@@ -11,4 +11,7 @@
            #:<
            #:>
            #:<=
-           #:>=))  ;; TODO add more
+           #:>=
+           #:slot-value
+           #:defstruct))
+          ; #:defspecialization))  ;; TODO add more

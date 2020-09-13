@@ -4,35 +4,50 @@
 
 ;; Utility
 
-(defparameter *comparable* '((number number)))
+(defun 2arg->rest (name)
+  (case name
+    (add '+)
+    (sub '-)
+    (mul '*)
+    (div '/)
+    (less '<)
+    (loq '<=)
+    (same '=)))
 
-;; TODO improve this hodge-podge type comparison
-(defun %comparable-types-p (type1 type2)
-  (cond
-    ((or (eql type1 '*) (eql type2 '*)) t)
-    ((or (eql type1 t) (eql type2 t)) t)             ;; TODO will probably need more ridiculous clauses in the fututre
-    ((symbolp type1)
-     (if (symbolp type2)
-         (or (eql type1 type2)
-            (loop :for (comp1 comp2) :in *comparable*
-                    :thereis (or (and (subtypep type1 comp1)
-                                   (subtypep type2 comp2))
-                                (and (subtypep type1 comp2)
-                                   (subtypep type2 comp1)))))
-         (or (eql type1 (car type2))
-            (loop :for (comp1 comp2) :in *comparable*
-                    :thereis (or (and (subtypep type1 comp1)
-                                   (subtypep (car type2) comp2))
-                                (and (subtypep type1 comp2)
-                                   (subtypep (car type2) comp1)))))))
-    ((symbolp type2)
-     (or (eql type2 (car type1))
-        (loop :for (comp1 comp2) :in *comparable*
-                :thereis (or (and (subtypep (car type1) comp1)
-                               (subtypep type2 comp2))
-                            (and (subtypep (car type1) comp2)
-                               (subtypep type2 comp1))))))
-    ((and (listp type1) (listp type2))
-     (loop :for a :in type1
-           :for b :in type2
-           :always (%comparable-types-p a b)))))
+
+(defmacro defspecialization (store-name specialized-lambda-list value-type &body body)
+  (if (not (member store-name '(add sub mul div same less loq)))
+      `(specialization-store:defspecialization ,store-name ,specialized-lambda-list
+         ,value-type ,@body)
+      (cond ((member store-name '(add mul))
+             `(progn
+                (specialization-store:defspecialization ,store-name ,specialized-lambda-list
+                  ,value-type ,@body)
+                (if (and (= 2 (length specialized-lambda-list))
+                       (eql (cadar specialized-lambda-list) (cadadr specialized-lambda-list))))
+                (let ((name (2arg->rest store-name)))
+                  (specialization-store:define-specialization ,name
+                      (&rest (args ,(cadar specialized-lambda-list)))
+                    ,value-type
+                    (:function (lambda (&rest objects)
+                                 (reduce #',name objects)))
+                    (:expand-function (compiler-macro-lambda (&whole form &rest objects &environment env)
+                                                             (if (constantp (length objects) env)
+                                                                 (reduce (lambda (a b) `(,name ,a ,b)) objects)
+                                                                 form)))))))
+            ((member store-name '(same less loq))
+             `(progn
+                (specialization-store:defspecialization ,store-name ,specialized-lambda-list
+                  ,value-type ,@body)
+                (if (and (= 2 (length specialized-lambda-list))
+                       (eql (cadar specialized-lambda-list) (cadadr specialized-lambda-list))))
+                (let ((name (2arg->rest store-name)))
+                  (specialization-store:define-specialization ,name
+                      (&rest (args ,(cadar specialized-lambda-list)))
+                    ,value-type
+                    (:function (lambda (&rest objects)
+                                 (reduce #',name objects)))
+                    (:expand-function (compiler-macro-lambda (&whole form &rest objects &environment env)
+                                                             (if (constantp (length objects) env)
+                                                                 (reduce (lambda (a b) `(,name ,a ,b)) objects)
+                                                                 form))))))))))
