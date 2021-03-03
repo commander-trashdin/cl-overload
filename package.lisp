@@ -1,7 +1,10 @@
 ;;;; package.lisp
 
 (defpackage #:cl-overload
-  (:use #:cl #:specialization-store #:introspect-environment)
+  (:use #:cl #:adhoc-polymorphic-functions
+        #:alexandria)
+  (:local-nicknames (:cm :sandalphon.compiler-macro)
+                    (:mop :closer-mop))
   (:shadow #:+
            #:-
            #:*
@@ -11,7 +14,4 @@
            #:<
            #:>
            #:<=
-           #:>=
-           #:slot-value
-           #:defstruct))
-          ; #:defspecialization))  ;; TODO add more
+           #:>=))

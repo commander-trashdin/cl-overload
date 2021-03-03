@@ -2,23 +2,23 @@
 
 
 
-(defspecialization (< :inline t) ((first number) (second number)) (values boolean &optional)
-  (cL:< first second))
+(defpolymorph < ((first number) (second number)) (values boolean &optional)
+              (cL:< first second))
 
-(defspecialization (<= :inline t) ((first number) (second number)) (values boolean &optional)
-  (cl:<= first second))
+(defpolymorph <= ((first number) (second number)) (values boolean &optional)
+              (cl:<= first second))
 
-(defspecialization (< :inline t) ((first character) (second character)) (values boolean &optional)
-  (char< first second))
+(defpolymorph < ((first character) (second character)) (values boolean &optional)
+              (char< first second))
 
-(defspecialization (<= :inline t) ((first character) (second character)) (values boolean &optional)
-  (char<= first second))
+(defpolymorph <= ((first character) (second character)) (values boolean &optional)
+              (char<= first second))
 
-(defspecialization (< :inline t) ((first string) (second string)) (values boolean &optional)
-  (string< first second))
+(defpolymorph < ((first string) (second string)) (values boolean &optional)
+              (string< first second))
 
-(defspecialization (<= :inline t) ((first string) (second string)) (values boolean &optional)
-  (string<= first second))
+(defpolymorph <= ((first string) (second string)) (values boolean &optional)
+              (string<= first second))
 
 
 
