@@ -4,4 +4,4 @@ Inspired by [generic-cl](https://github.com/alex-gutev/generic-cl) and  [special
 
 
 # Implementations support
-It currently works properly (i.e without overhead) anywhere, where both introspect-environment and specialization-store both work.
+It currently works properly (i.e without overhead) anywhere, where [adhoc polymorphic functions](https://github.com/digikar99/adhoc-polymorphic-functions) work. Cltl2 support is the most important thing.

@@ -1,7 +1,7 @@
 (in-package #:cl-overload)
 
 
-;; Deep-copy   --- is mediocre rn
+;; Deep-copy  --- is mediocre rn
 
 
 
