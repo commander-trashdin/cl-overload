@@ -27,23 +27,23 @@
     r))
 
 (defpolymorph-compiler-macro deep-copy (array) (o &environment env)
-                             (let* ((o-type (cm:form-type o env))
-                                    (o-elt  (cm:array-type-element-type o-type))
-                                    (o-dim  (cm:array-type-dimensions o-type)))
-                               `(the ,o-type
-                                     ,(once-only (o)
-                                                 `(let ((r (make-array ',o-dim
-                                                                       :element-type ',o-elt
-                                                                       ;; Further part may be handled by the compiler-macro
-                                                                       ;; of DEFAULT
-                                                                       :initial-element (default ',o-elt))))
-                                                    (declare (type ,o-type ,o r))
-                                                    (loop :for i :below ,(reduce #'* o-dim :initial-value 1) ;;Looks questionable, since not all dimensions are constant
-                                                          :do (setf (row-major-aref r i)
-                                                                    ;; Leave make-array and row-major-aref to be optimized by SBCL
-                                                                    (the ,o-elt
-                                                                         (deep-copy (the ,o-elt (row-major-aref ,o i))))))
-                                                    r)))))
+  (let* ((o-type (cm:form-type o env))
+         (o-elt  (cm:array-type-element-type o-type))
+         (o-dim  (cm:array-type-dimensions o-type)))
+    `(the ,o-type
+          ,(once-only (o)
+             `(let ((r (make-array ',o-dim
+                                   :element-type ',o-elt
+                                   ;; Further part may be handled by the compiler-macro
+                                   ;; of DEFAULT
+                                   :initial-element (default ',o-elt))))
+                (declare (type ,o-type ,o r))
+                (loop :for i :below ,(reduce (lambda (x y) `(* x y)) o-dim) ;;Looks questionable, since not all dimensions are constant
+                      :do (setf (row-major-aref r i)
+                                ;; Leave make-array and row-major-aref to be optimized by SBCL
+                                (the ,o-elt
+                                     (deep-copy (the ,o-elt (row-major-aref ,o i))))))
+                r)))))
 
 
 (defpolymorph deep-copy ((o cons)) (values cons &optional)
