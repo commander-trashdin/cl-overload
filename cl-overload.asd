@@ -9,12 +9,13 @@
   :components ((:file "package")
                (:module "src"
                 :components
-                ((:file "overload")
-                 (:file "utility")
+                ((:file "utility")
+                 (:file "overload")
                  (:file "equality")
                  (:file "inequality")
                  (:file "arithmetics")
                  (:file "access")
                  (:file "deep-copy")
                  (:file "cast")
+                 (:file "lookup")
                  (:file "container-size")))))

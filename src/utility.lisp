@@ -3,6 +3,11 @@
 
 
 ;; Utility
+
+
+(deftype ind () `(integer 0 #.array-dimension-limit))
+
+
 (defparameter *default-impl* (make-hash-table))
 
 
