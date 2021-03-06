@@ -16,4 +16,5 @@
                  (:file "arithmetics")
                  (:file "access")
                  (:file "deep-copy")
-                 (:file "cast")))))
+                 (:file "cast")
+                 (:file "container-size")))))

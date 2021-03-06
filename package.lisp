@@ -14,4 +14,11 @@
            #:<
            #:>
            #:<=
-           #:>=))
+           #:>=
+           #:remove
+           #:remove-if
+           #:sort
+           #:count
+           #:find
+           #:map
+           #:emptyp))
