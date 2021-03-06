@@ -52,7 +52,7 @@
           (t `(cl:array-total-size ,object)))))
 
 
-(defpolymorph emptyp ((object list)) (values ind &optional)
+(defpolymorph size ((object list)) (values ind &optional)
   (length object))
 
 
