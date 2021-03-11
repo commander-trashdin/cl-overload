@@ -7,13 +7,13 @@
 
 
 (defpolymorph deep-copy ((o number)) number
-              o)
+  o)
 
 (defpolymorph deep-copy ((o character)) character
-              o)
+  o)
 
 (defpolymorph deep-copy ((o symbol)) symbol
-              o)
+  o)
 
 
 (defpolymorph deep-copy ((o array)) array
@@ -47,42 +47,42 @@
 
 
 (defpolymorph deep-copy ((o cons)) (values cons &optional)
-              (cons (deep-copy (car o)) (deep-copy (cdr o))))
+  (cons (deep-copy (car o)) (deep-copy (cdr o))))
 
 (defpolymorph-compiler-macro deep-copy (cons) (o &environment env)
-                             (let ((type (cm:form-type o env)))
-                               (print `(the ,type
-                                            ,(once-only (o)
-                                                        `(cons (deep-copy (car ,o))
-                                                               (deep-copy (cdr ,o))))))))
+  (let ((type (cm:form-type o env)))
+    (print `(the ,type
+                 ,(once-only (o)
+                    `(cons (deep-copy (car ,o))
+                           (deep-copy (cdr ,o))))))))
 
 (defpolymorph deep-copy ((o structure-object)) (values structure-object &optional)
-              (let* ((type        (type-of o))
-                     (initializer (find-symbol (concatenate 'string
-                                                            "MAKE-"
-                                                            (symbol-name type))))
-                     (slots (mop:class-slots (find-class type))))
-                (apply initializer
-                       (loop :for slot :in slots
-                             :for name := (mop:slot-definition-name slot)
-                             :for value := (slot-value o name)
-                             :appending `(,(intern (symbol-name name) :keyword)
-                                           ,(deep-copy value))))))
+  (let* ((type        (type-of o))
+         (initializer (find-symbol (concatenate 'string
+                                                "MAKE-"
+                                                (symbol-name type))))
+         (slots (mop:class-slots (find-class type))))
+    (apply initializer
+           (loop :for slot :in slots
+                 :for name := (mop:slot-definition-name slot)
+                 :for value := (slot-value o name)
+                 :appending `(,(intern (symbol-name name) :keyword)
+                              ,(deep-copy value))))))
 
 (defpolymorph-compiler-macro deep-copy (structure-object) (o &environment env)
-                             ;; TODO: Handle the case when TYPE is something complicated: "satisfies"
-                             (let* ((type        (cm:form-type o env))
-                                    (initializer (find-symbol (concatenate 'string
-                                                                           "MAKE-"
-                                                                           (symbol-name type))))
-                                    (slots (mop:class-slots (find-class type))))
-                               (print `(the ,type
-                                            (let ((o ,o))
-                                              (declare (type ,type o))
-                                              (,initializer
-                                               ,@(loop :for slot :in slots
-                                                       :for name := (mop:slot-definition-name slot)
-                                                       :for slot-type := (mop:slot-definition-type slot)
-                                                       :for value := `(slot-value o ',name)
-                                                       :appending `(,(intern (symbol-name name) :keyword)
-                                                                     (deep-copy (the ,slot-type ,value))))))))))
+  ;; TODO: Handle the case when TYPE is something complicated: "satisfies"
+  (let* ((type        (cm:form-type o env))
+         (initializer (find-symbol (concatenate 'string
+                                                "MAKE-"
+                                                (symbol-name type))))
+         (slots (mop:class-slots (find-class type))))
+    (print `(the ,type
+                 (let ((o ,o))
+                   (declare (type ,type o))
+                   (,initializer
+                    ,@(loop :for slot :in slots
+                            :for name := (mop:slot-definition-name slot)
+                            :for slot-type := (mop:slot-definition-type slot)
+                            :for value := `(slot-value o ',name)
+                            :appending `(,(intern (symbol-name name) :keyword)
+                                         (deep-copy (the ,slot-type ,value))))))))))
