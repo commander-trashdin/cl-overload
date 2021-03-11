@@ -1,4 +1,4 @@
-;;;TODO THinking about it I suspect that all those standard functions aren't really suited for
+;;;TODO Thinking about it I suspect that all those standard functions aren't really suited for
 ;;;multidim arrays anyway. Implementing them feels forced and sometimes very questionable. Decent
 ;;;tensor manipulation libraries will most likely have their own specific API for suc things,
 ;;;therefore it is probably better to not bother
@@ -121,3 +121,37 @@
                    :when (,test (the ,elt-type (row-major-aref ,container ,pos)) ,object)
                      :do (return (the ,elt-type (row-major-aref ,container ,pos)))
                    :do (incf ,pos)))))))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;; Just to have some sane code for lower-bound
+(defpolymorph lower-bound ((object t) (container array)
+                           &key ((start ind) 0)
+                           ((end ind) (size container))
+                           ((test function) #'<))
+  (or t null)
+  (let ((first start)
+        (count (cl:- end start)))
+    (declare (type ind count))
+    (loop :while (< 0 count)
+          :for it :of-type ind := first
+          :for step :of-type ind := (floor count 2)
+          :do (incf it step)
+          (if (funcall test (aref container it) object)
+              (progn (setf first (incf it))
+                     (decf count (cl:+ step 1)))
+              (setf count step)))
+    first))

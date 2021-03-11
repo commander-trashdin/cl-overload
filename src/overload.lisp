@@ -24,15 +24,15 @@
 (define-polymorphic-function (setf front) (new container))
 (define-polymorphic-function (setf back) (new container))
 
-(define-polymorphic-function slice (container from &optional to)) ;;COW semantics
+(define-polymorphic-function slice (container &optional from to)) ;;COW semantics
 
 
 (define-polymorphic-function count (object container &key start end test))
 (define-polymorphic-function find (object container &key start end test from-end))
 (define-polymorphic-function position (object container &key start end test from-end))
 
-(define-polymorphic-function lower-bound (object container &key from to test))
-(define-polymorphic-function greater-bound (object container &key from to test))
+(define-polymorphic-function lower-bound (object container &key start end test))
+(define-polymorphic-function greater-bound (object container &key start end test))
 
 
 (define-polymorphic-function clear (container))

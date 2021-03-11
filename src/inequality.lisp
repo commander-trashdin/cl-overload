@@ -2,10 +2,10 @@
 
 
 
-(defpolymorph < ((first number) (second number)) (values boolean &optional)
+(defpolymorph < ((first real) (second real)) (values boolean &optional)
               (cL:< first second))
 
-(defpolymorph <= ((first number) (second number)) (values boolean &optional)
+(defpolymorph <= ((first real) (second real)) (values boolean &optional)
               (cl:<= first second))
 
 (defpolymorph < ((first character) (second character)) (values boolean &optional)

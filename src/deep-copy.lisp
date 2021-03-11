@@ -56,7 +56,21 @@
                     `(cons (deep-copy (car ,o))
                            (deep-copy (cdr ,o))))))))
 
-(defpolymorph deep-copy ((o structure-object)) (values structure-object &optional)
+
+(defpolymorph deep-copy ((o hash-table)) (values hash-table &optional)
+  (let ((copy (make-hash-table :test (hash-table-test o)
+                               :size (hash-table-size o)
+                               :rehash-size (hash-table-rehash-size o)
+                               :rehash-threshold (hash-table-rehash-threshold o))))
+    (loop :for k :being :the :hash-keys :in o
+            :using (hash-value v)
+          :do (setf (gethash (deep-copy k) copy) v))
+    copy))
+
+
+
+(defpolymorph deep-copy ((o (and structure-object (not hash-table))))
+    (values (and structure-object (not hash-table)) &optional)
   (let* ((type        (type-of o))
          (initializer (find-symbol (concatenate 'string
                                                 "MAKE-"
@@ -69,7 +83,7 @@
                  :appending `(,(intern (symbol-name name) :keyword)
                               ,(deep-copy value))))))
 
-(defpolymorph-compiler-macro deep-copy (structure-object) (o &environment env)
+(defpolymorph-compiler-macro deep-copy ((and structure-object (not hash-table))) (o &environment env)
   ;; TODO: Handle the case when TYPE is something complicated: "satisfies"
   (let* ((type        (cm:form-type o env))
          (initializer (find-symbol (concatenate 'string
