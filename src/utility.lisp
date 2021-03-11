@@ -6,7 +6,7 @@
 
 
 (deftype ind () `(integer 0 #.array-dimension-limit))
-
+(deftype typed-ht (key value) `hash-table)           ;; this is a HACK
 
 (defparameter *default-impl* (make-hash-table))
 

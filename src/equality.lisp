@@ -24,15 +24,29 @@
   (eql first second))
 
 (defpolymorph = ((first character) (second character)) (values boolean &optional)
-              (char= first second))
+  (char= first second))
 
 (defpolymorph = ((first string) (second string)) (values boolean &optional)
-              (string= first second))
+  (string= first second))
 
 
-(defpolymorph = ((first cons) (second cons)) (values boolean &optional)
-              (and (= (car first) (car second))
-                 (= (cdr first) (cdr second))))
+(defpolymorph = ((first cons) (second cons)) (values boolean &optional) ;;FIXME this needs
+  (and (= (car first) (car second))                                       ;;to be inlined correctly
+     (= (cdr first) (cdr second))))                                     ;;preferably not manually
+
+#||
+(defpolymorph-compiler-macro = (cons cons) (first second &environment env)
+  (let* ((type1 (cm:form-type first env))
+         (type2 (cm:form-type second env))
+         (car1 (cm:cons-type-car-type type1))
+         (car2 (cm:cons-type-car-type type2))
+         (cdr1 (cm:cons-type-cdr-type type1))
+         (cdr2 (cm:cons-type-cdr-type type2)))
+    (once-only (first second)
+      `(and (= (the ,(or (eql 'cl:* car1) car1) (car ,first)) (the ,(or (eql 'cl:* car2) car2) (car ,second)))
+          (= (the ,(or (eql 'cl:* cdr1) cdr1) (cdr ,first)) (the ,(or (eql 'cl:* cdr2) cdr2) (cdr ,second)))))))
+||#
+
 
 
 

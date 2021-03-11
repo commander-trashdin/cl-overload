@@ -21,4 +21,5 @@
            #:count
            #:find
            #:map
-           #:emptyp))
+           #:emptyp
+           #:position))
