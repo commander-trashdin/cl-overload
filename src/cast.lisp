@@ -32,6 +32,13 @@
   (declare (ignorable type))
   (code-char object))
 
-(defpolymorph cast ((object character) (type integer)) (mod 1114112)
+(defpolymorph cast ((object character) (type (eql integer))) (mod 1114112)
   (declare (ignorable type))
   (char-code object))
+
+
+(defpolymorph casr ((object bit) (type (eql boolean))) boolean
+  (cl:= object 1))
+
+(defpolymorph casr ((object boolean) (type (eql bit))) bit
+  (if object 1 0))

@@ -10,7 +10,7 @@
      (defstruct ,(if inheritance `(,name (:include ,@inheritance)) name)
        ,@(loop :for (type sname . rest) :in slots
                :collect `(,sname
-                           ,(or (first rest) (default type))
+                          ,(or (first rest) (default type))
                           :type ,type)))
      (declaim (inline ,name))
      (defun ,name (&optional ,@(mapcar (lambda (slot) `(,(second slot) ,(or (third slot) (default (first slot)))))
@@ -27,6 +27,9 @@
                            (,(intern (concatenate 'string (string name) "-" (string sname)))
                             object))))))
 
+
+;; FIXME I forgot to do setfs. Shoudln't be too hard. Oh wait, generating compiler macros with macros.
+;; Oh no....
 
 
 
