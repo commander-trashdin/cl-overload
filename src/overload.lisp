@@ -17,7 +17,7 @@
 
 
 (define-polymorphic-function emptyp (container))
-(define-polymorphic-function size (container))   ;;The name?
+(define-polymorphic-function size (continer))   ;;The name?
 (define-polymorphic-function capacity (container))
 (define-polymorphic-function back (container))
 (define-polymorphic-function front (container))
@@ -32,7 +32,7 @@
 (define-polymorphic-function position (object container &key start end test from-end))
 
 (define-polymorphic-function lower-bound (object container &key start end test))
-(define-polymorphic-function greater-bound (object container &key start end test))
+(define-polymorphic-function upper-bound (object container &key start end test))
 
 
 (define-polymorphic-function clear (container))
