@@ -14,7 +14,9 @@
                      (if (symbolp names)
                          (let ((typedec (member :t types-and-values)))
                            (if typedec
-                               (setf types-and-values (third typedec))
+                               (if (null (cdr typedec))
+                                   (setf types-and-values `(:t t :t)) ;;TODO ugly way of biding :t specifically
+                                   (setf types-and-values (third typedec)))
                                (setf types-and-values (first types-and-values)))
                            `(let ((,names ,(or types-and-values
                                               (if typedec (default (second typedec))))))

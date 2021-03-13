@@ -20,4 +20,5 @@
                  (:file "lookup")
                  (:file "structs")
                  (:file "slice")
-                 (:file "container-size")))))
+                 (:file "container-size")
+                 (:file "transform")))))

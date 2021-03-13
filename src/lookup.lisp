@@ -23,15 +23,19 @@
     res))
 
 (defpolymorph-compiler-macro count (t array &key (:start ind) (:end ind) (:test function))
-    (object container &key (start 0) (end `(size ,container)) (test '=) &environment env)
+  (object container &key (start 0) (end `(size ,container)) (test '=) &environment env)
   (let* ((cont-type (cm:form-type container env))
          (elt-type (cm:array-type-element-type cont-type)))
-    `(let ((res 0))
-       (declare (type ind res))
-       (loop :for i :from ,start :below ,end
-             :when (,test (the ,elt-type (row-major-aref ,container i)) ,object)
-               :do (incf res))
-       res)))
+    (if (constantp container env)
+        `(the ind (cl:count ,object ,container :start ,start :end ,end
+                                               :test ,(if (eql test '=) #'= test)))
+
+        `(let ((res 0))
+           (declare (type ind res))
+           (loop :for i :from ,start :below ,end
+                 :when (,test (the ,elt-type (row-major-aref ,container i)) ,object)
+                   :do (incf res))
+           res))))
 
 (defpolymorph count ((object t) (container list)
                                 &key ((start ind) 0)
@@ -66,19 +70,22 @@
   (let* ((cont-type (cm:form-type container env))
          (elt-type (cm:array-type-element-type cont-type))
          (pos (gensym "POS")))
-    `(if ,from-end
-         (let ((,pos ,end))
-           (declare (type ind ,pos))
-           (loop :until (= ,pos ,start)
-                 :do (decf ,pos)
-                 :when (,test (the ,elt-type (row-major-aref ,container ,pos)) ,object)
-                   :do (return ,pos)))
-         (let ((,pos ,start))
-           (declare (type ind ,pos))
-           (loop :until (= ,pos ,end)
-                 :when (,test (the ,elt-type (row-major-aref ,container ,pos)) ,object)
-                   :do (return ,pos)
-                 :do (incf ,pos))))))
+    (if (constantp container env)
+        `(the ind (cl:position ,object ,container :start ,start :end ,end :from-end ,from-end
+                                                  :test ,(if (eql test '=) #'= test)))
+        `(if ,from-end
+             (let ((,pos ,end))
+               (declare (type ind ,pos))
+               (loop :until (= ,pos ,start)
+                     :do (decf ,pos)
+                     :when (,test (the ,elt-type (row-major-aref ,container ,pos)) ,object)
+                       :do (return ,pos)))
+             (let ((,pos ,start))
+               (declare (type ind ,pos))
+               (loop :until (= ,pos ,end)
+                     :when (,test (the ,elt-type (row-major-aref ,container ,pos)) ,object)
+                       :do (return ,pos)
+                     :do (incf ,pos)))))))
 
 
 (defpolymorph find ((object t) (container array)
@@ -104,23 +111,23 @@
   (let* ((cont-type (cm:form-type container env))
          (elt-type (cm:array-type-element-type cont-type))
          (pos (gensym "POS")))
-    ;(when (and (listp container) (eql 'reverse (first container))) ;; This is wrong anyway, should be about function, not name
-    ;  (setf from-end `(not ,from-end)                              ;; Also, we are not SERIES
-    ;        container (second container)))
-    (once-only (container)
-      `(if ,from-end
-           (let ((,pos ,end))
-             (declare (type ind ,pos))
-             (loop :until (= ,pos ,start)
-                   :do (decf ,pos)
-                   :when (,test (the ,elt-type (row-major-aref ,container ,pos)) ,object)
-                     :do (return (the ,elt-type (row-major-aref ,container ,pos)))))
-           (let ((,pos ,start))
-             (declare (type ind ,pos))
-             (loop :until (= ,pos ,end)
-                   :when (,test (the ,elt-type (row-major-aref ,container ,pos)) ,object)
-                     :do (return (the ,elt-type (row-major-aref ,container ,pos)))
-                   :do (incf ,pos)))))))
+    (if (constantp container env)
+        `(the ind (cl:find ,object ,container :start ,start :end ,end :from-end ,from-end
+                                              :test ,(if (eql test '=) #'= test)))
+        (once-only (container)
+          `(if ,from-end
+               (let ((,pos ,end))
+                 (declare (type ind ,pos))
+                 (loop :until (= ,pos ,start)
+                       :do (decf ,pos)
+                       :when (,test (the ,elt-type (row-major-aref ,container ,pos)) ,object)
+                         :do (return (the ,elt-type (row-major-aref ,container ,pos)))))
+               (let ((,pos ,start))
+                 (declare (type ind ,pos))
+                 (loop :until (= ,pos ,end)
+                       :when (,test (the ,elt-type (row-major-aref ,container ,pos)) ,object)
+                         :do (return (the ,elt-type (row-major-aref ,container ,pos)))
+                       :do (incf ,pos))))))))
 
 
 

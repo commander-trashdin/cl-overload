@@ -17,7 +17,7 @@
 
 
 (define-polymorphic-function emptyp (container))
-(define-polymorphic-function size (container))   ;; The name?
+(define-polymorphic-function size (container))   ;;The name?
 (define-polymorphic-function capacity (container))
 (define-polymorphic-function back (container))
 (define-polymorphic-function front (container))
@@ -37,6 +37,13 @@
 
 (define-polymorphic-function clear (container))
 
+
+(define-polymorphic-function fill (container item &key start end copy))
+(define-polymorphic-function replace (target source &key start1 end1 start2 end2 copy))
+(define-polymorphic-function substitute (new old container &key from-end test
+                                             start end count mut))
+(define-polymorphic-function substitute-if (new predicate container
+                                                &key from-end start end count mut))
 ;; Questionable
 ;;TODO add math operations (+, -, *)
 ;;TODO add container operations:
@@ -52,7 +59,6 @@
 
 ;;;; TODO from the future -- consider overhauling other standard functions that are implemented using the
 ;;;; above mentioned
-;;;; Crazy ideas: waaay more math overhaul
-;;;; Basically anything that is based on primitive ring operations can be usually extended
+
 ;;;;
 ;;;; Add more algorithms, and data structures (Should be a separate library)

@@ -22,4 +22,8 @@
            #:find
            #:map
            #:emptyp
-           #:position))
+           #:position
+           #:fill
+           #:replace
+           #:substitute
+           #:substitute-if))
