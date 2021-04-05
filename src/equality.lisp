@@ -30,9 +30,9 @@
   (string= first second))
 
 
-(defpolymorph = ((first cons) (second cons)) (values boolean &optional) ;;FIXME this needs
-  (and (= (car first) (car second))                                       ;;to be inlined correctly
-     (= (cdr first) (cdr second))))                                     ;;preferably not manually
+(defpolymorph (= :inline t) ((first cons) (second cons)) (values boolean &optional)
+              (and (= (car first) (car second))
+                 (= (cdr first) (cdr second))))
 
 #||
 (defpolymorph-compiler-macro = (cons cons) (first second &environment env)

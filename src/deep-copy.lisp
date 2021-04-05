@@ -16,7 +16,7 @@
   o)
 
 
-(defpolymorph deep-copy ((o array)) array
+(defpolymorph (deep-copy :inline t) ((o array)) array
   ;; Could consider more options like displacements
   (let ((r (make-array (array-dimensions o)
                        :element-type (array-element-type o)
@@ -38,7 +38,7 @@
                                    ;; of DEFAULT
                                    :initial-element (default ',o-elt))))
                 (declare (type ,o-type ,o r))
-                (loop :for i :below ,(reduce (lambda (x y) `(* x y)) o-dim) ;;Looks questionable, since not all dimensions are constant
+                (loop :for i :below ,(cl:reduce (lambda (x y) `(cl:* x y)) o-dim) ;;Looks questionable, since not all dimensions are constant
                       :do (setf (row-major-aref r i)
                                 ;; Leave make-array and row-major-aref to be optimized by SBCL
                                 (the ,o-elt
@@ -69,7 +69,7 @@
 
 
 
-(defpolymorph deep-copy ((o (and structure-object (not hash-table))))
+(defpolymorph (deep-copy :inline t) ((o structure-object))
     (values (and structure-object (not hash-table)) &optional)
   (let* ((type        (type-of o))
          (initializer (find-symbol (concatenate 'string
@@ -83,7 +83,7 @@
                  :appending `(,(intern (symbol-name name) :keyword)
                               ,(deep-copy value))))))
 
-(defpolymorph-compiler-macro deep-copy ((and structure-object (not hash-table))) (o &environment env)
+(defpolymorph-compiler-macro deep-copy (structure-object) (o &environment env)
   ;; TODO: Handle the case when TYPE is something complicated: "satisfies"
   (let* ((type        (cm:form-type o env))
          (initializer (find-symbol (concatenate 'string

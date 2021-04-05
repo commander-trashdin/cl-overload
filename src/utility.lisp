@@ -12,7 +12,7 @@
 
 
 
-(Defun %dimensions-comp (dimensions)
+(defun %dimensions-comp (dimensions)
   (cond ((eql '* dimensions) 0)
         ((listp dimensions) (mapcar (lambda (x) (if (eql '* x) 0 x)) dimensions))
         (t dimensions)))
@@ -98,3 +98,17 @@
                                       :initial-element ,(if (first rest)
                                                             (default (first rest))
                                                             0))))))))))
+
+
+
+
+
+(defmacro zapf (place expr)
+  (multiple-value-bind
+        (temps exprs stores store-expr access-expr)
+      (get-setf-expansion place)
+    `(let* (,@(mapcar #'list temps exprs)
+            (,(car stores)
+              (let ((% ,access-expr))
+                ,expr)))
+       ,store-expr)))

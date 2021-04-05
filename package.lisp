@@ -5,24 +5,16 @@
         #:alexandria)
   (:local-nicknames (:cm :sandalphon.compiler-macro)
                     (:mop :closer-mop))
-  (:shadow #:+
-           #:-
-           #:*
-           #:/
-           #:=
-           #:/=
-           #:<
-           #:>
-           #:<=
-           #:>=
-           #:remove
-           #:remove-if
+  (:shadow #:+ #:- #:* #:/
+           #:= #:/=
+           #:< #:> #:<= #:>=
+           #:remove #:remove-if
            #:sort
-           #:count
-           #:find
-           #:map
+           #:count #:count-if
+           #:find #:find-if
+           #:map #:reduce
            #:emptyp
-           #:position
+           #:position #:position-if
            #:fill
            #:replace
            #:substitute

@@ -34,3 +34,7 @@
                                 :collect `(setf (aref ,name ,i) ,(elt init i)))
                         ,name))))))
     (2 t))) ;;TODO
+
+
+
+;; Okay this is bad for a lot of reasons.

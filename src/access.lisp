@@ -7,8 +7,7 @@
 (defpolymorph at ((array array) &rest indexes) t
   (apply #'aref array indexes))
 
-
-(defpolymorph-compiler-macro at (array) (array &rest indexes &environment env)
+(defpolymorph-compiler-macro at (array &rest) (array &rest indexes &environment env)
   (let* ((ar-type (cm:form-type array env))
          (elt-type  (cm:array-type-element-type ar-type)))
     (if (constantp (length indexes) env)
@@ -21,7 +20,7 @@
 
 
 
-(defpolymorph-compiler-macro (setf at) (t array) (new array &rest indexes &environment env)
+(defpolymorph-compiler-macro (setf at) (t array &rest) (new array &rest indexes &environment env)
   (let* ((ar-type (cm:form-type array env))
          (elt-type  (cm:array-type-element-type ar-type))
          (new-type (cm:form-type new env)))
@@ -45,13 +44,12 @@
 
 
 
-
 (defpolymorph at ((list list) &rest indexes) t
   (apply #'elt (the cons list) indexes))
 
 
 
-(defpolymorph-compiler-macro at (list) (list &rest indexes &environment env)
+(defpolymorph-compiler-macro at (list &rest) (list &rest indexes &environment env)
   (if (constantp (length indexes) env)
       `(elt ,list ,@indexes)
       `(apply #'elt ,list ,indexes)))
@@ -63,7 +61,7 @@
 
 
 
-(defpolymorph-compiler-macro (setf at) (t list) (new list &rest indexes &environment env)
+(defpolymorph-compiler-macro (setf at) (t list &rest) (new list &rest indexes &environment env)
   (if (constantp (length indexes) env)
       `(setf (elt ,list ,@indexes) ,new)
       `(setf (apply #'elt ,list ,indexes) new)))
@@ -77,7 +75,7 @@
 
 
 
-(defpolymorph-compiler-macro at (hash-table) (ht &rest indexes &environment env)
+(defpolymorph-compiler-macro at (hash-table &rest) (ht &rest indexes &environment env)
   (let ((ht-type (print (cm:form-type ht env))))
    (if (constantp (length indexes) env)
        (if (listp ht-type)      ;; TODO this trick doesn't work unfortunately, but it might.
@@ -95,7 +93,6 @@
 
 
 ;; TODO (setf at) for hash-tables
-
 
 
 

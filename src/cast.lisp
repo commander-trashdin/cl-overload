@@ -37,8 +37,10 @@
   (char-code object))
 
 
-(defpolymorph casr ((object bit) (type (eql boolean))) boolean
+(defpolymorph cast ((object bit) (type (eql boolean))) boolean
+  (declare (ignorable type))
   (cl:= object 1))
 
-(defpolymorph casr ((object boolean) (type (eql bit))) bit
+(defpolymorph cast ((object boolean) (type (eql bit))) bit
+  (declare (ignorable type))
   (if object 1 0))

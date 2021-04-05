@@ -37,8 +37,10 @@
 
 
 
+
+
 ;;; Example of usage
-;;; '(tbind* ((x :t fixnum 10)
+;;; (tbind* ((x :t fixnum 10)
 ;;            (y :t string)
 ;;            ((a b) :t (fixnum fixnum) (floor 1000500 500))
 ;;     body)))
